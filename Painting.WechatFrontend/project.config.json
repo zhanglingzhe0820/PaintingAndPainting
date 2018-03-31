@@ -1,0 +1,141 @@
+{
+	"description": "项目配置文件。",
+	"setting": {
+		"urlCheck": false,
+		"es6": true,
+		"postcss": true,
+		"minified": true,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"libVersion": "1.7.0",
+	"appid": "wx85dcce057baa45b8",
+	"projectname": "S%26C",
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"current": -1,
+			"list": []
+		},
+		"miniprogram": {
+			"current": 6,
+			"list": [
+				{
+					"id": 0,
+					"name": "app",
+					"pathName": "pages/index/index",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "menu",
+					"pathName": "pages/customer/restaurant/menu/menu",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "user",
+					"pathName": "pages/customer/user/user",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "choose",
+					"pathName": "pages/customer/restaurant/choose/choose",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "cart",
+					"pathName": "pages/customer/cart/cart",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "order",
+					"pathName": "pages/customer/order/order",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "orderPreview",
+					"pathName": "pages/customer/orderPreview/orderPreview",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "authentication",
+					"pathName": "pages/customer/authentication/authentication",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "menu with id",
+					"pathName": "pages/customer/restaurant/menu/menu",
+					"query": "restaurant=3"
+				},
+				{
+					"id": -1,
+					"name": "supplier home",
+					"pathName": "pages/supplier/home/home",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "addFood",
+					"pathName": "pages/supplier/addFood/addFood",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "chooseFood",
+					"pathName": "pages/supplier/chooseFood/chooseFood",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "receiveOrder",
+					"pathName": "pages/supplier/receiveOrder/receiveOrder",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "chooseFunction",
+					"pathName": "pages/supplier/chooseFunction/chooseFunction",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "orderSetting",
+					"pathName": "pages/supplier/orderSetting/orderSetting",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "manageFood",
+					"pathName": "pages/supplier/manageFood/manageFood",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "editFood",
+					"pathName": "pages/supplier/editFood/editFood",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "about",
+					"pathName": "pages/customer/about/about",
+					"query": ""
+				}
+			]
+		}
+	}
+}
