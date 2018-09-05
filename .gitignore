@@ -46,9 +46,3 @@
 
 *.lock
 *.bak
-
-# node.js modules
-
-**/build
-**/dist
-**/node_modules
