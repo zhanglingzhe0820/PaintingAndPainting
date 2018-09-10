@@ -6,9 +6,52 @@ apply plugin: 'java'
 sourceCompatibility = 1.8
 
 repositories {
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+    mavenLocal()
     mavenCentral()
 }
-
 dependencies {
+    compile 'net.sf.json-lib:json-lib:2.4:jdk15'
+    compile group: 'net.sourceforge.jexcelapi', name: 'jxl', version: '2.6'
+    compile 'com.jfoenix:jfoenix:1.9.1'
+    compile 'de.jensd:fontawesomefx-commons:8.15'
+    compile 'de.jensd:fontawesomefx-materialicons:2.2.0-5'
+    compile 'de.jensd:fontawesomefx-fontawesome:4.7.0-5'
+    compile 'de.jensd:fontawesomefx-materialdesignfont:1.7.22-4'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'njurestaurant.njutakeout.MainApplication'
+    }
+    into('lib') {
+        from configurations.runtime
+    }
+}
+//依赖编译，然后打包JAR
+task taskJar(type: Jar, dependsOn: compileJava) {
+    from 'build/classes'
+    destinationDir = file('build/libs')
+}
+
+//清除上次的编译过的文件
+task clearPj(type: Delete) {
+    delete 'build', 'target'
+}
+
+//把JAR复制到目标目录
+task release(type: Copy, dependsOn: [clearPj, taskJar]) {
+    from('build/libs') {
+        include '*.jar'
+    }
+    into('target')
+}
+
+//导出依赖jar包
+task copyJars(type: Copy) {
+    from configurations.runtime
+    into 'dist' // 目标位置
+}
+

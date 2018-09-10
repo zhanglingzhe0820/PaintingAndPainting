@@ -10,7 +10,19 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="PaintingAndPainting_main" />
+    <orderEntry type="library" name="Gradle: net.sf.json-lib:json-lib:jdk15:2.4" level="project" />
+    <orderEntry type="library" name="Gradle: net.sourceforge.jexcelapi:jxl:2.6" level="project" />
+    <orderEntry type="library" name="Gradle: com.jfoenix:jfoenix:1.9.1" level="project" />
+    <orderEntry type="library" name="Gradle: de.jensd:fontawesomefx-materialicons:2.2.0-5" level="project" />
+    <orderEntry type="library" name="Gradle: de.jensd:fontawesomefx-fontawesome:4.7.0-5" level="project" />
+    <orderEntry type="library" name="Gradle: de.jensd:fontawesomefx-materialdesignfont:1.7.22-4" level="project" />
+    <orderEntry type="library" name="Gradle: de.jensd:fontawesomefx-commons:8.15" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
+    <orderEntry type="library" name="Gradle: commons-beanutils:commons-beanutils:1.8.0" level="project" />
+    <orderEntry type="library" name="Gradle: commons-collections:commons-collections:3.2.1" level="project" />
+    <orderEntry type="library" name="Gradle: net.sf.ezmorph:ezmorph:1.0.6" level="project" />
+    <orderEntry type="library" name="Gradle: commons-lang:commons-lang:2.5" level="project" />
+    <orderEntry type="library" name="Gradle: commons-logging:commons-logging:1.1.1" level="project" />
     <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="PaintingAndPainting_main" />
