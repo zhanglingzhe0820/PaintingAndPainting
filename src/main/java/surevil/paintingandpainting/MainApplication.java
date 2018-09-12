@@ -5,7 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import surevil.paintingandpainting.presentation.mainui.StageManager;
+import surevil.paintingandpainting.presentation.frameworkui.FrameworkUiController;
+import surevil.paintingandpainting.presentation.frameworkui.StageManager;
 import surevil.paintingandpainting.util.PathUtil;
 
 public class MainApplication extends Application {
@@ -35,14 +36,26 @@ public class MainApplication extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        FXMLLoader frameworkLoader = new FXMLLoader();
+        frameworkLoader.setLocation(getClass().getResource("/fxml/frameworkui/FrameworkUi.fxml"));
+        Scene scene = new Scene(frameworkLoader.load());
 
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/fxml/canvasui/CanvasUi.fxml"));
-        Scene newScene = new Scene(loader.load());
+        FrameworkUiController controller = frameworkLoader.getController();
 
-        primaryStage.setScene(newScene);
+        primaryStage.initStyle(StageStyle.UNDECORATED);
+
+        primaryStage.setScene(scene);
+
+        primaryStage.setHeight(900);
+        primaryStage.setWidth(1500);
+
+        FXMLLoader contentLoader = new FXMLLoader();
+        contentLoader.setLocation(getClass().getResource("/fxml/canvasui/CanvasUi.fxml"));
+
+        controller.setContent(contentLoader.load());
+
         StageManager.setStage(primaryStage);
+        controller.initializeUiConfig();
         primaryStage.show();
     }
 }

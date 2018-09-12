@@ -1,4 +1,4 @@
-package surevil.paintingandpainting.presentation.mainui;
+package surevil.paintingandpainting.presentation.frameworkui;
 
 import javafx.stage.Stage;
 
