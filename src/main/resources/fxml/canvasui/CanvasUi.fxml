@@ -1,9 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import de.jensd.fx.glyphs.materialicons.MaterialIconView?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="600.0" spacing="20" xmlns="http://javafx.com/javafx/8.0.121"
-      fx:controller="surevil.paintingandpainting.presentation.canvasui.CanvasUiController"
-      xmlns:fx="http://javafx.com/fxml/1">
-    <Canvas fx:id="canvas"/>
-</VBox>
+<?import surevil.paintingandpainting.presentation.component.ContactableButton?>
+<StackPane alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8.0.121"
+           xmlns:fx="http://javafx.com/fxml/1" fx:id="container" prefHeight="800" prefWidth="1475"
+           fx:controller="surevil.paintingandpainting.presentation.canvasui.CanvasUiController">
+    <VBox>
+        <HBox spacing="20">
+            <!--<JFXButton fx:id="btnCancel" buttonType="RAISED" onAction="#onBtnCancelClicked"-->
+            <!--style="-fx-background-color: #E8EAF6; -fx-text-fill: #000000;" text="取消">-->
+            <!--<graphic>-->
+            <!--<FontAwesomeIconView glyphName="HOME" glyphSize="24"/>-->
+            <!--</graphic>-->
+            <!--</JFXButton>-->
+            <ContactableButton fx:id="btnReset" buttonType="RAISED"
+                               style="-fx-background-color: #e64a19; -fx-text-fill: #FFFFFF" text="重置">
+                <graphic>
+                    <MaterialIconView glyphName="REFRESH" glyphSize="24"/>
+                </graphic>
+            </ContactableButton>
+            <ContactableButton fx:id="btnSubmit" buttonType="RAISED"
+                               style="-fx-background-color: #3F51B5; -fx-text-fill: #FFFFFF" text="提交">
+                <graphic>
+                    <MaterialIconView glyphName="CHECK" glyphSize="24" glyphStyle="-fx-fill: #FFFFFF"/>
+                </graphic>
+            </ContactableButton>
+        </HBox>
+        <Canvas fx:id="canvas" height="800" onMouseReleased="#exitDraw"
+                onMouseDragged="#draw"
+                width="1475"/>
+    </VBox>
+</StackPane>
+
