@@ -27,11 +27,15 @@ public class CanvasUiController {
     private Canvas canvas;
     @FXML
     private Canvas fakeCanvas;
+    @FXML
+    private Canvas perfectCanvas;
 
     //用于画图的canvas
     private PaintingKit paintingKit;
     //用于虚线画框的canvas
     private PaintingKit fakePaintingKit;
+    //用于画完美图形的canvas
+    private PaintingKit perfectPaintingKit;
 
     //用于确认是否是选择模式（画框模式）
     private boolean isSelecting;
@@ -52,6 +56,7 @@ public class CanvasUiController {
     private void initCanvas() {
         paintingKit = new PaintingKit(canvas);
         fakePaintingKit = new PaintingKit(fakeCanvas);
+        perfectPaintingKit = new PaintingKit(perfectCanvas);
         isSelecting = false;
         loadCanvas();
     }
@@ -92,9 +97,12 @@ public class CanvasUiController {
             Point endPoint = new Point(event.getX(), event.getY());
             fakePaintingKit.drawFrame(selectStartPoint, endPoint);
             Point core = calculateCore(selectStartPoint, endPoint);
-            promptDialog(shape -> paintingKit.drawShape(shape, core));
+            promptDialog(shape -> {
+                paintingKit.tag(shape, core);
+                perfectPaintingKit.drawShape(shape, selectStartPoint, endPoint);
 
-            exitSelectingMode();
+                exitSelectingMode();
+            });
         }
     }
 

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import de.jensd.fx.glyphs.materialicons.MaterialIconView?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.*?>
 <?import surevil.paintingandpainting.presentation.component.ContactableButton?>
-<StackPane alignment="TOP_CENTER" xmlns="http://javafx.com/javafx/8.0.121"
-           xmlns:fx="http://javafx.com/fxml/1" fx:id="container" prefHeight="800" prefWidth="1475"
+<StackPane fx:id="container" alignment="TOP_CENTER" prefHeight="800" prefWidth="1475"
+           xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="surevil.paintingandpainting.presentation.canvasui.CanvasUiController">
-    <VBox>
-        <HBox spacing="20">
+    <HBox>
+        <VBox spacing="20.0"
+              style="-fx-background-color: rgba(132,134,133,0.95);-fx-text-alignment: right">
             <ContactableButton fx:id="btnSelect" buttonType="RAISED" onMouseClicked="#onBtnSelectClicked"
                                style="-fx-background-color: #339900; -fx-text-fill: #FFFFFF" text="选中">
                 <graphic>
@@ -30,15 +31,22 @@
                     <MaterialIconView glyphName="CHECK" glyphSize="24" glyphStyle="-fx-fill: #FFFFFF"/>
                 </graphic>
             </ContactableButton>
+            <HBox.margin>
+                <Insets/>
+            </HBox.margin>
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+            </padding>
+        </VBox>
+        <HBox>
+            <StackPane>
+                <Canvas fx:id="canvas" height="810" onMouseDragged="#draw" onMouseReleased="#exitDraw" width="700"/>
+                <Canvas fx:id="fakeCanvas" height="810" onMouseDragged="#draw" onMouseReleased="#exitDraw" width="700"/>
+            </StackPane>
+            <Separator orientation="VERTICAL"/>
+            <StackPane>
+                <Canvas fx:id="perfectCanvas" height="810" width="700"/>
+            </StackPane>
         </HBox>
-        <StackPane>
-            <Canvas fx:id="canvas" height="800" onMouseReleased="#exitDraw"
-                    onMouseDragged="#draw"
-                    width="1475"/>
-            <Canvas fx:id="fakeCanvas" height="800" onMouseReleased="#exitDraw"
-                    onMouseDragged="#draw"
-                    width="1475"/>
-        </StackPane>
-    </VBox>
+    </HBox>
 </StackPane>
-

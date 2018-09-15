@@ -47,7 +47,7 @@ public class MainApplication extends Application {
         primaryStage.setScene(scene);
 
         primaryStage.setHeight(900);
-        primaryStage.setWidth(1500);
+        primaryStage.setWidth(1600);
 
         FXMLLoader contentLoader = new FXMLLoader();
         contentLoader.setLocation(getClass().getResource("/fxml/canvasui/CanvasUi.fxml"));
