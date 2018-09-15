@@ -11,28 +11,34 @@
            fx:controller="surevil.paintingandpainting.presentation.canvasui.CanvasUiController">
     <VBox>
         <HBox spacing="20">
-            <!--<JFXButton fx:id="btnCancel" buttonType="RAISED" onAction="#onBtnCancelClicked"-->
-            <!--style="-fx-background-color: #E8EAF6; -fx-text-fill: #000000;" text="取消">-->
-            <!--<graphic>-->
-            <!--<FontAwesomeIconView glyphName="HOME" glyphSize="24"/>-->
-            <!--</graphic>-->
-            <!--</JFXButton>-->
-            <ContactableButton fx:id="btnReset" buttonType="RAISED"
-                               style="-fx-background-color: #e64a19; -fx-text-fill: #FFFFFF" text="重置">
+            <ContactableButton fx:id="btnSelect" buttonType="RAISED" onMouseClicked="#onBtnSelectClicked"
+                               style="-fx-background-color: #339900; -fx-text-fill: #FFFFFF" text="选中">
                 <graphic>
-                    <MaterialIconView glyphName="REFRESH" glyphSize="24"/>
+                    <MaterialIconView glyphName="CHECK_BOX_OUTLINE_BLANK" glyphSize="24"
+                                      glyphStyle="-fx-fill: #FFFFFF"/>
                 </graphic>
             </ContactableButton>
-            <ContactableButton fx:id="btnSubmit" buttonType="RAISED"
+            <ContactableButton fx:id="btnReset" buttonType="RAISED" onMouseClicked="#onBtnResetClicked"
+                               style="-fx-background-color: #e64a19; -fx-text-fill: #FFFFFF" text="重置">
+                <graphic>
+                    <MaterialIconView glyphName="REFRESH" glyphSize="24" glyphStyle="-fx-fill: #FFFFFF"/>
+                </graphic>
+            </ContactableButton>
+            <ContactableButton fx:id="btnSubmit" buttonType="RAISED" onMouseClicked="#onBtnSubmitClicked"
                                style="-fx-background-color: #3F51B5; -fx-text-fill: #FFFFFF" text="提交">
                 <graphic>
                     <MaterialIconView glyphName="CHECK" glyphSize="24" glyphStyle="-fx-fill: #FFFFFF"/>
                 </graphic>
             </ContactableButton>
         </HBox>
-        <Canvas fx:id="canvas" height="800" onMouseReleased="#exitDraw"
-                onMouseDragged="#draw"
-                width="1475"/>
+        <StackPane>
+            <Canvas fx:id="canvas" height="800" onMouseReleased="#exitDraw"
+                    onMouseDragged="#draw"
+                    width="1475"/>
+            <Canvas fx:id="fakeCanvas" height="800" onMouseReleased="#exitDraw"
+                    onMouseDragged="#draw"
+                    width="1475"/>
+        </StackPane>
     </VBox>
 </StackPane>
 

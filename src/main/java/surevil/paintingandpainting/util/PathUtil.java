@@ -1,17 +1,26 @@
 package surevil.paintingandpainting.util;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class PathUtil {
-    public final static String TEMP_FILE_NAME = "PaintingAndPainting";
+    private final static String TEMP_FILE_NAME = "PaintingAndPainting";
 
     public static String getTmpPath() {
         java.util.Properties properties = System.getProperties();
         String tempFileName = properties.getProperty("java.io.tmpdir");
         return tempFileName + TEMP_FILE_NAME;
+    }
+
+    public static String getTmpPath(String fileName) {
+        java.util.Properties properties = System.getProperties();
+        String tempFileName = properties.getProperty("java.io.tmpdir");
+        return tempFileName + TEMP_FILE_NAME + "/" + fileName;
+    }
+
+    public static String getDatabasePath(String fileName) {
+        return ResourceUtil.getFilePathUnderRootDirOfJarFileOrClassDir("/data/" + fileName);
     }
 
     public static String getDatabasePath() {
@@ -37,25 +46,7 @@ public class PathUtil {
         }
 
         ArrayList<File> fileArrayList = new ArrayList<>();
-        fileArrayList.add(new File(resourcePath + "/User.txt"));
-        fileArrayList.add(new File(resourcePath + "/FormulaLiquid.txt"));
-        fileArrayList.add(new File(resourcePath + "/FormulaOil.txt"));
-        fileArrayList.add(new File(resourcePath + "/ProductionBillLiquid.txt"));
-        fileArrayList.add(new File(resourcePath + "/ProductionBillOil.txt"));
-
-        try (FileWriter writer = new FileWriter(getDatabasePath() + "user.txt")) {
-            writer.write("{\"id\":1,\"username\":\"admin\",\"password\":\"57578971\"}\n");
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (FileWriter writer = new FileWriter(getDatabasePath() + "topic.txt")) {
-            writer.write("{\"topicId\":1,\"value\":\"123123\"}\n");
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        fileArrayList.add(new File(resourcePath + "/canvas.png"));
 
 
         for (File file : fileArrayList) {
