@@ -46,7 +46,7 @@ public class PathUtil {
         }
 
         ArrayList<File> fileArrayList = new ArrayList<>();
-        fileArrayList.add(new File(resourcePath + "/canvas.png"));
+        fileArrayList.add(new File(resourcePath + "/History.txt"));
 
 
         for (File file : fileArrayList) {

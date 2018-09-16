@@ -19,6 +19,12 @@
                                       glyphStyle="-fx-fill: #FFFFFF"/>
                 </graphic>
             </ContactableButton>
+            <ContactableButton fx:id="btnRevert" buttonType="RAISED" onMouseClicked="#onBtnRevertClicked"
+                               style="-fx-background-color: #9999CC; -fx-text-fill: #FFFFFF" text="回撤">
+                <graphic>
+                    <MaterialIconView glyphName="RESTORE" glyphSize="24" glyphStyle="-fx-fill: #FFFFFF"/>
+                </graphic>
+            </ContactableButton>
             <ContactableButton fx:id="btnReset" buttonType="RAISED" onMouseClicked="#onBtnResetClicked"
                                style="-fx-background-color: #e64a19; -fx-text-fill: #FFFFFF" text="重置">
                 <graphic>

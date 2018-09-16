@@ -2,6 +2,7 @@ package surevil.paintingandpainting.util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ReflectionUtil {
 
@@ -15,9 +16,7 @@ public class ReflectionUtil {
         }
         for (int i = classArrayList.size() - 1; i >= 0; i--) {
             Field[] fields = classArrayList.get(i).getDeclaredFields();
-            for (Field field : fields) {
-                fieldArrayList.add(field);
-            }
+            fieldArrayList.addAll(Arrays.asList(fields));
         }
         return fieldArrayList.toArray(new Field[fieldArrayList.size()]);
     }

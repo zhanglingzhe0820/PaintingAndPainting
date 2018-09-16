@@ -11,12 +11,12 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import surevil.paintingandpainting.dto.Point;
 import surevil.paintingandpainting.exception.CanvasLoadException;
 import surevil.paintingandpainting.exception.CanvasSaveException;
 import surevil.paintingandpainting.kit.PaintingKit;
+import surevil.paintingandpainting.publicdata.DataKind;
+import surevil.paintingandpainting.publicdata.Point;
 import surevil.paintingandpainting.publicdata.Shape;
-import surevil.paintingandpainting.util.PathUtil;
 
 import java.util.function.Consumer;
 
@@ -63,7 +63,8 @@ public class CanvasUiController {
 
     private void loadCanvas() {
         try {
-            paintingKit.load(getStoreFilePath());
+            paintingKit.load(DataKind.RAW);
+            perfectPaintingKit.load(DataKind.PERFECT);
         } catch (CanvasLoadException e) {
             e.printStackTrace();
         }
@@ -119,14 +120,21 @@ public class CanvasUiController {
     }
 
     @FXML
+    private void onBtnRevertClicked(MouseEvent event) {
+        paintingKit.revert();
+    }
+
+    @FXML
     private void onBtnResetClicked(MouseEvent event) {
         paintingKit.clearAll();
+        perfectPaintingKit.clearAll();
     }
 
     @FXML
     private void onBtnSubmitClicked(MouseEvent event) {
         try {
-            paintingKit.save(getStoreFilePath());
+            paintingKit.save(DataKind.RAW);
+            perfectPaintingKit.save(DataKind.PERFECT);
         } catch (CanvasSaveException exception) {
             exception.printStackTrace();
             JFXDialogLayout layout = new JFXDialogLayout();
@@ -160,10 +168,6 @@ public class CanvasUiController {
             hBox.getChildren().add(button);
         }
         dialog.show();
-    }
-
-    private String getStoreFilePath() {
-        return PathUtil.getDatabasePath("canvas.png");
     }
 
 }

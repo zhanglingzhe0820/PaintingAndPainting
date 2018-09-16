@@ -1,22 +1,22 @@
 package surevil.paintingandpainting.kit;
 
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
-import surevil.paintingandpainting.dto.Point;
+import surevil.paintingandpainting.blservice.factory.HistoryBlServiceFactory;
+import surevil.paintingandpainting.blservice.record.HistoryBlService;
+import surevil.paintingandpainting.entity.record.Record;
+import surevil.paintingandpainting.entity.record.perfectrecord.PerfectRecord;
+import surevil.paintingandpainting.entity.record.rawrecord.LineRawRecord;
+import surevil.paintingandpainting.entity.record.rawrecord.TextRawRecord;
 import surevil.paintingandpainting.exception.CanvasLoadException;
 import surevil.paintingandpainting.exception.CanvasSaveException;
+import surevil.paintingandpainting.publicdata.DataKind;
+import surevil.paintingandpainting.publicdata.Point;
 import surevil.paintingandpainting.publicdata.Shape;
-import surevil.paintingandpainting.util.PathUtil;
+import surevil.paintingandpainting.util.PaintingUtil;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class PaintingKit {
@@ -24,21 +24,22 @@ public class PaintingKit {
     private Canvas canvas;
     private GraphicsContext graphicsContext;
     private Point lastPoint;
-    private Stack<File> historys;
+    private Stack<Record> records;
+    private HistoryBlService historyBlService = HistoryBlServiceFactory.getHistoryBlService();
 
     public PaintingKit(Canvas canvas) {
         this.canvas = canvas;
         this.graphicsContext = canvas.getGraphicsContext2D();
-        this.graphicsContext.setFill(Color.GREEN);
 
-        historys = new Stack<>();
+        records = new Stack<>();
     }
 
     public void drawPoint(Point point) {
         if (lastPoint == null) {
             lastPoint = point;
         }
-        graphicsContext.strokeLine(lastPoint.getX(), lastPoint.getY(), point.getX(), point.getY());
+        PaintingUtil.drawLine(graphicsContext, lastPoint, point);
+        records.push(new LineRawRecord(lastPoint, point));
         lastPoint = point;
     }
 
@@ -59,95 +60,38 @@ public class PaintingKit {
 
     public void clearAll() {
         graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        records.clear();
     }
 
-    public void save(String path) throws CanvasSaveException {
-        try {
-            File file = new File(path);
-            WritableImage image = canvas.snapshot(new SnapshotParameters(), null);
-            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new CanvasSaveException();
-        }
+    public void save(DataKind dataKind) throws CanvasSaveException {
+        historyBlService.updateHistory(records, dataKind);
     }
 
-    public void load(String path) throws CanvasLoadException {
-        try {
-            double wholeWidth = canvas.getWidth();
-            double wholeHeight = canvas.getHeight();
-            Image image = new Image(new FileInputStream(new File(path)), wholeWidth, wholeHeight, false, false);
-            WritableImage croppedImage = new WritableImage(image.getPixelReader(), 0, 0, (int) wholeWidth, (int) wholeHeight);
-            graphicsContext.drawImage(croppedImage, canvas.getLayoutX(), canvas.getLayoutY());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CanvasLoadException();
-        }
+    public void load(DataKind dataKind) throws CanvasLoadException {
+        List<Record> loadedRecords = historyBlService.loadHistory(dataKind);
+        drawAllOperations(loadedRecords);
+        records = loadedRecords.stream().collect(Stack::new, Stack::push, Stack::addAll);
     }
 
     public void tag(Shape shape, Point core) {
-        graphicsContext.fillText(shape.getName(), core.getX(), core.getY());
+        PaintingUtil.drawText(graphicsContext, shape.getName(), core);
+        records.push(new TextRawRecord(shape.getName(), core));
     }
 
     public void drawShape(Shape shape, Point startPoint, Point endPoint) {
-        Point core = new Point((startPoint.getX() + endPoint.getX()) / 2, (startPoint.getY() + endPoint.getY()) / 2);
-        double minLength = Math.min(Math.abs(startPoint.getX() - endPoint.getX()), Math.abs(startPoint.getY() - endPoint.getY()));
-        switch (shape) {
-            case CIRCLE:
-                graphicsContext.strokeOval(core.getX() - minLength / 2, core.getY() - minLength / 2, minLength, minLength);
-                break;
-            case SQUARE:
-                graphicsContext.strokeRect(core.getX() - minLength / 2, core.getY() - minLength / 2, minLength, minLength);
-                break;
-            case TRIANGLE:
-                double[] xs = new double[3];
-                double[] ys = new double[3];
-                xs[0] = core.getX() - minLength / 2;
-                ys[0] = core.getY() + minLength / 2 / Math.sqrt(3);
-                xs[1] = core.getX() + minLength / 2;
-                ys[1] = core.getY() + minLength / 2 / Math.sqrt(3);
-                xs[2] = core.getX();
-                ys[2] = core.getY() - minLength / Math.sqrt(3);
-                graphicsContext.strokePolygon(xs, ys, 3);
-                break;
-            case RECTANGLE:
-                graphicsContext.strokeRect(startPoint.getX(), startPoint.getY(), endPoint.getX() - startPoint.getX(), endPoint.getY() - startPoint.getY());
-                break;
-        }
-
+        PaintingUtil.drawShape(graphicsContext, shape, startPoint, endPoint);
+        records.push(new PerfectRecord(shape, startPoint, endPoint));
     }
 
     private void restoreLast() {
-        double wholeWidth = canvas.getWidth();
-        double wholeHeight = canvas.getHeight();
-        String imageURL = historys.pop().getAbsolutePath();
-        Image image = new Image(imageURL, wholeWidth, wholeHeight, false, true);
-        WritableImage croppedImage = new WritableImage(image.getPixelReader(), 0, 0, (int) wholeWidth, (int) wholeHeight);
-        graphicsContext.drawImage(croppedImage, canvas.getLayoutX(), canvas.getLayoutY());
+        clearAll();
+        records.pop();
+        drawAllOperations(new ArrayList<>(records));
     }
 
-    private void saveNow() {
-        File file = nextFile();
-        WritableImage image = canvas.snapshot(new SnapshotParameters(), null);
-        try {
-            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
-            historys.push(file);
-        } catch (IOException ignored) {
-        }
-    }
-
-    private File nextFile() {
-        return new File(nextHistoryIndex());
-    }
-
-    private String nextHistoryIndex() {
-        if (historys.empty()) {
-            return PathUtil.getTmpPath("0");
-        } else {
-            File file = historys.lastElement();
-            String[] paths = file.getAbsolutePath().split("/");
-            int lastIndex = Integer.parseInt(paths[paths.length - 1]);
-            return PathUtil.getTmpPath(String.valueOf(lastIndex + 1));
+    private void drawAllOperations(List<Record> records) {
+        for (Record record : records) {
+            record.draw(graphicsContext);
         }
     }
 }

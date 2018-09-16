@@ -1,6 +1,8 @@
-package surevil.paintingandpainting.dto;
+package surevil.paintingandpainting.publicdata;
 
-public class Point {
+import java.io.Serializable;
+
+public class Point implements Serializable {
     private double x;
     private double y;
 
