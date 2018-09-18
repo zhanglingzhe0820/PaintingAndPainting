@@ -2,7 +2,7 @@ package surevil.paintingandpainting.util;
 
 import javafx.scene.canvas.GraphicsContext;
 import surevil.paintingandpainting.publicdata.Point;
-import surevil.paintingandpainting.publicdata.Shape;
+import surevil.paintingandpainting.publicdata.perfect.ShapeKind;
 
 public class PaintingUtil {
 
@@ -18,10 +18,10 @@ public class PaintingUtil {
         graphicsContext.restore();
     }
 
-    public static void drawShape(GraphicsContext graphicsContext, Shape shape, Point startPoint, Point endPoint) {
+    public static void drawShape(GraphicsContext graphicsContext, ShapeKind shapeKind, Point startPoint, Point endPoint) {
         Point core = new Point((startPoint.getX() + endPoint.getX()) / 2, (startPoint.getY() + endPoint.getY()) / 2);
         double minLength = Math.min(Math.abs(startPoint.getX() - endPoint.getX()), Math.abs(startPoint.getY() - endPoint.getY()));
-        switch (shape) {
+        switch (shapeKind) {
             case CIRCLE:
                 graphicsContext.strokeOval(core.getX() - minLength / 2, core.getY() - minLength / 2, minLength, minLength);
                 break;

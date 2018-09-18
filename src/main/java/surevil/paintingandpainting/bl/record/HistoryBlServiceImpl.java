@@ -26,7 +26,7 @@ public class HistoryBlServiceImpl implements HistoryBlService {
     @Override
     public void updateHistory(Stack<Record> recordStack, DataKind dataKind) throws CanvasSaveException {
         List<Record> recordList = new ArrayList<>(recordStack);
-        historyDataService.save(new History(dataKind.getIndex(), dataKind, recordList));
+        historyDataService.save(new History(dataKind.getName(), recordList));
     }
 
     /**
@@ -37,11 +37,16 @@ public class HistoryBlServiceImpl implements HistoryBlService {
      */
     @Override
     public List<Record> loadHistory(DataKind dataKind) throws CanvasLoadException {
-        Optional<History> optionalHistory = historyDataService.getAllHistory().stream().filter(history -> history.getDataKind() == dataKind).findFirst();
-        if (optionalHistory.isPresent()) {
-            History history = optionalHistory.get();
-            return history.getRecords();
-        } else {
+        try {
+            List<History> histories = historyDataService.getAllHistory();
+            Optional<History> optionalHistory = histories.stream().filter(tempHistory -> dataKind.getName().equals(tempHistory.getDataKind())).findFirst();
+            if (optionalHistory.isPresent()) {
+                History history = optionalHistory.get();
+                return history.getRecords();
+            } else {
+                throw new CanvasLoadException();
+            }
+        } catch (Exception e) {
             throw new CanvasLoadException();
         }
     }

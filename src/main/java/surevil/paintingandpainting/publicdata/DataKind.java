@@ -1,16 +1,16 @@
 package surevil.paintingandpainting.publicdata;
 
 public enum DataKind {
-    RAW(1),
-    PERFECT(2);
+    RAW("RAW"),
+    PERFECT("PERFECT");
 
-    private int index;
+    private String name;
 
-    DataKind(int index) {
-        this.index = index;
+    DataKind(String name) {
+        this.name = name;
     }
 
-    public int getIndex() {
-        return index;
+    public String getName() {
+        return name;
     }
 }

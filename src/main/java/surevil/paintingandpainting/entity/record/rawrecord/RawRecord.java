@@ -2,21 +2,21 @@ package surevil.paintingandpainting.entity.record.rawrecord;
 
 import surevil.paintingandpainting.entity.record.Record;
 import surevil.paintingandpainting.publicdata.DataKind;
-import surevil.paintingandpainting.publicdata.OperationKind;
+import surevil.paintingandpainting.publicdata.raw.RawKind;
 
 public abstract class RawRecord extends Record {
-    private OperationKind operationKind;
+    private RawKind rawKind;
 
-    public RawRecord(OperationKind operationKind) {
+    public RawRecord(RawKind rawKind) {
         super(DataKind.RAW);
-        this.operationKind = operationKind;
+        this.rawKind = rawKind;
     }
 
-    public OperationKind getOperationKind() {
-        return operationKind;
+    public RawKind getRawKind() {
+        return rawKind;
     }
 
-    public void setOperationKind(OperationKind operationKind) {
-        this.operationKind = operationKind;
+    public void setRawKind(RawKind rawKind) {
+        this.rawKind = rawKind;
     }
 }

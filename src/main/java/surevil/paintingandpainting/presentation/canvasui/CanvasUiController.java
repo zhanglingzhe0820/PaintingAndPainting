@@ -3,7 +3,6 @@ package surevil.paintingandpainting.presentation.canvasui;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
-import de.jensd.fx.glyphs.materialicons.MaterialIcon;
 import de.jensd.fx.glyphs.materialicons.MaterialIconView;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -11,13 +10,19 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import surevil.paintingandpainting.blservice.factory.RecognitionBlServiceFactory;
+import surevil.paintingandpainting.blservice.record.RecognitionBlService;
 import surevil.paintingandpainting.exception.CanvasLoadException;
 import surevil.paintingandpainting.exception.CanvasSaveException;
 import surevil.paintingandpainting.kit.PaintingKit;
 import surevil.paintingandpainting.publicdata.DataKind;
+import surevil.paintingandpainting.publicdata.PaintingOperationKind;
 import surevil.paintingandpainting.publicdata.Point;
-import surevil.paintingandpainting.publicdata.Shape;
+import surevil.paintingandpainting.publicdata.perfect.ShapeKind;
+import surevil.paintingandpainting.util.PromptDialogUtil;
 
+import java.util.Stack;
 import java.util.function.Consumer;
 
 public class CanvasUiController {
@@ -41,6 +46,9 @@ public class CanvasUiController {
     private boolean isSelecting;
     //选择模式的起始点（画框模式）
     private Point selectStartPoint;
+
+    private RecognitionBlService recognitionBlService = RecognitionBlServiceFactory.getRecognitionBlService();
+    private Stack<PaintingOperationKind> paintingOperationKindStack = new Stack<>();
 
     @FXML
     private void initialize() {
@@ -76,14 +84,15 @@ public class CanvasUiController {
             //非选择模式下自由绘图
             fakePaintingKit.clearAll();
             paintingKit.drawPoint(new Point(event.getX(), event.getY()));
+            paintingOperationKindStack.push(PaintingOperationKind.LINE);
         } else {
             //选择模式下画框
             if (selectStartPoint == null) {
                 selectStartPoint = new Point(event.getX(), event.getY());
             } else {
                 fakePaintingKit.clearAll();
-                fakePaintingKit.drawFrame(selectStartPoint, new Point(event.getX(), event.getY()));
             }
+            fakePaintingKit.drawFrame(selectStartPoint, new Point(event.getX(), event.getY()));
         }
     }
 
@@ -94,14 +103,15 @@ public class CanvasUiController {
     private void exitDraw(MouseEvent event) {
         if (!isSelecting) {
             paintingKit.dropBrush();
+            paintingOperationKindStack.push(PaintingOperationKind.DROP);
         } else {
             Point endPoint = new Point(event.getX(), event.getY());
             fakePaintingKit.drawFrame(selectStartPoint, endPoint);
             Point core = calculateCore(selectStartPoint, endPoint);
-            promptDialog(shape -> {
+            promptShapeDialog(shape -> {
                 paintingKit.tag(shape, core);
                 perfectPaintingKit.drawShape(shape, selectStartPoint, endPoint);
-
+                paintingOperationKindStack.push(PaintingOperationKind.SELECT);
                 exitSelectingMode();
             });
         }
@@ -113,6 +123,7 @@ public class CanvasUiController {
     private void exitSelectingMode() {
         isSelecting = false;
         selectStartPoint = null;
+        fakePaintingKit.clearAll();
     }
 
     private Point calculateCore(Point start, Point end) {
@@ -121,7 +132,22 @@ public class CanvasUiController {
 
     @FXML
     private void onBtnRevertClicked(MouseEvent event) {
-        paintingKit.revert();
+        try {
+            while (true) {
+                PaintingOperationKind paintingOperationKind = paintingOperationKindStack.pop();
+                if (paintingOperationKind == PaintingOperationKind.DROP) {
+                    break;
+                } else if (paintingOperationKind == PaintingOperationKind.LINE) {
+                    paintingKit.revert();
+                } else {
+                    paintingKit.revert();
+                    perfectPaintingKit.revert();
+                }
+            }
+        } catch (CanvasLoadException e) {
+            e.printStackTrace();
+            PromptDialogUtil.show(container, "回撤失败！请重试！或者寻找支持人员！", "回撤失败！");
+        }
     }
 
     @FXML
@@ -137,14 +163,7 @@ public class CanvasUiController {
             perfectPaintingKit.save(DataKind.PERFECT);
         } catch (CanvasSaveException exception) {
             exception.printStackTrace();
-            JFXDialogLayout layout = new JFXDialogLayout();
-            JFXButton button = new JFXButton("好", new MaterialIconView(MaterialIcon.CHECK));
-            layout.setBody(new Label("保存失败！请重试！或者寻找支持人员！"));
-            layout.setHeading(new Label("保存失败！"));
-            layout.setActions(button);
-            JFXDialog dialog = new JFXDialog(container, layout, JFXDialog.DialogTransition.CENTER);
-            button.setOnAction(e -> dialog.close());
-            dialog.show();
+            PromptDialogUtil.show(container, "保存失败！请重试！或者寻找支持人员！", "保存失败！");
         }
     }
 
@@ -153,20 +172,24 @@ public class CanvasUiController {
         isSelecting = true;
     }
 
-    private void promptDialog(Consumer<Shape> shapeConsumer) {
+    private void promptShapeDialog(Consumer<ShapeKind> shapeConsumer) {
         JFXDialogLayout layout = new JFXDialogLayout();
-        HBox hBox = new HBox();
-        layout.setHeading(new Label("请选择图形"));
-        layout.setHeading(hBox);
+        VBox vBox = new VBox();
+        ShapeKind recognizedShapeKind = recognitionBlService.recognizeShapeByImage();
+        Label label = new Label(" 请选择图形，系统推荐结果为" + recognizedShapeKind.getName());
+        vBox.getChildren().add(label);
+        layout.setHeading(vBox);
         JFXDialog dialog = new JFXDialog(container, layout, JFXDialog.DialogTransition.CENTER);
-        for (Shape shape : Shape.values()) {
-            JFXButton button = new JFXButton(shape.getName(), new MaterialIconView(shape.getMaterialIcon()));
+        HBox hBox = new HBox();
+        for (ShapeKind shapeKind : ShapeKind.values()) {
+            JFXButton button = new JFXButton(shapeKind.getName(), new MaterialIconView(shapeKind.getMaterialIcon()));
             button.setOnMouseClicked(event -> {
-                shapeConsumer.accept(shape);
+                shapeConsumer.accept(shapeKind);
                 dialog.close();
             });
             hBox.getChildren().add(button);
         }
+        vBox.getChildren().add(hBox);
         dialog.show();
     }
 

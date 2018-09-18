@@ -4,27 +4,27 @@ import javafx.scene.canvas.GraphicsContext;
 import surevil.paintingandpainting.entity.record.Record;
 import surevil.paintingandpainting.publicdata.DataKind;
 import surevil.paintingandpainting.publicdata.Point;
-import surevil.paintingandpainting.publicdata.Shape;
+import surevil.paintingandpainting.publicdata.perfect.ShapeKind;
 import surevil.paintingandpainting.util.PaintingUtil;
 
 public class PerfectRecord extends Record {
-    private Shape shape;
+    private ShapeKind shapeKind;
     private Point startPoint;
     private Point endPoint;
 
-    public PerfectRecord(Shape shape, Point startPoint, Point endPoint) {
+    public PerfectRecord(ShapeKind shapeKind, Point startPoint, Point endPoint) {
         super(DataKind.PERFECT);
-        this.shape = shape;
+        this.shapeKind = shapeKind;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
     }
 
-    public Shape getShape() {
-        return shape;
+    public ShapeKind getShapeKind() {
+        return shapeKind;
     }
 
-    public void setShape(Shape shape) {
-        this.shape = shape;
+    public void setShapeKind(ShapeKind shapeKind) {
+        this.shapeKind = shapeKind;
     }
 
     public Point getStartPoint() {
@@ -44,7 +44,7 @@ public class PerfectRecord extends Record {
     }
 
     public void draw(GraphicsContext graphicsContext) {
-        PaintingUtil.drawShape(graphicsContext, shape, startPoint, endPoint);
+        PaintingUtil.drawShape(graphicsContext, shapeKind, startPoint, endPoint);
     }
 }
 

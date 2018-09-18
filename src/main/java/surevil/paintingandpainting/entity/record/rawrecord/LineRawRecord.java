@@ -1,7 +1,7 @@
 package surevil.paintingandpainting.entity.record.rawrecord;
 
 import javafx.scene.canvas.GraphicsContext;
-import surevil.paintingandpainting.publicdata.OperationKind;
+import surevil.paintingandpainting.publicdata.raw.RawKind;
 import surevil.paintingandpainting.publicdata.Point;
 import surevil.paintingandpainting.util.PaintingUtil;
 
@@ -10,7 +10,7 @@ public class LineRawRecord extends RawRecord {
     private Point endPoint;
 
     public LineRawRecord(Point startPoint, Point endPoint) {
-        super(OperationKind.LINE);
+        super(RawKind.LINE);
         this.startPoint = startPoint;
         this.endPoint = endPoint;
     }

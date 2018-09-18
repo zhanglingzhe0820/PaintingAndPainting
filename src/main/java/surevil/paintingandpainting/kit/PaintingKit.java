@@ -12,7 +12,7 @@ import surevil.paintingandpainting.exception.CanvasLoadException;
 import surevil.paintingandpainting.exception.CanvasSaveException;
 import surevil.paintingandpainting.publicdata.DataKind;
 import surevil.paintingandpainting.publicdata.Point;
-import surevil.paintingandpainting.publicdata.Shape;
+import surevil.paintingandpainting.publicdata.perfect.ShapeKind;
 import surevil.paintingandpainting.util.PaintingUtil;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class PaintingKit {
         graphicsContext.restore();
     }
 
-    public void revert() {
+    public void revert() throws CanvasLoadException {
         restoreLast();
     }
 
@@ -73,25 +73,29 @@ public class PaintingKit {
         records = loadedRecords.stream().collect(Stack::new, Stack::push, Stack::addAll);
     }
 
-    public void tag(Shape shape, Point core) {
-        PaintingUtil.drawText(graphicsContext, shape.getName(), core);
-        records.push(new TextRawRecord(shape.getName(), core));
+    public void tag(ShapeKind shapeKind, Point core) {
+        PaintingUtil.drawText(graphicsContext, shapeKind.getName(), core);
+        records.push(new TextRawRecord(shapeKind.getName(), core));
     }
 
-    public void drawShape(Shape shape, Point startPoint, Point endPoint) {
-        PaintingUtil.drawShape(graphicsContext, shape, startPoint, endPoint);
-        records.push(new PerfectRecord(shape, startPoint, endPoint));
+    public void drawShape(ShapeKind shapeKind, Point startPoint, Point endPoint) {
+        PaintingUtil.drawShape(graphicsContext, shapeKind, startPoint, endPoint);
+        records.push(new PerfectRecord(shapeKind, startPoint, endPoint));
     }
 
-    private void restoreLast() {
-        clearAll();
+    private void restoreLast() throws CanvasLoadException {
+        graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         records.pop();
         drawAllOperations(new ArrayList<>(records));
     }
 
-    private void drawAllOperations(List<Record> records) {
-        for (Record record : records) {
-            record.draw(graphicsContext);
+    private void drawAllOperations(List<Record> records) throws CanvasLoadException {
+        try {
+            for (Record record : records) {
+                record.draw(graphicsContext);
+            }
+        } catch (Exception e) {
+            throw new CanvasLoadException();
         }
     }
 }

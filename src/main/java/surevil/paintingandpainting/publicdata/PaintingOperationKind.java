@@ -1,6 +1,7 @@
 package surevil.paintingandpainting.publicdata;
 
-public enum OperationKind {
+public enum PaintingOperationKind {
     LINE,
-    TEXT
+    DROP,
+    SELECT
 }
