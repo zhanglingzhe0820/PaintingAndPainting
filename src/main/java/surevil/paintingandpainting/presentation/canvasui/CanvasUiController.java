@@ -4,13 +4,19 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import de.jensd.fx.glyphs.materialicons.MaterialIconView;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import surevil.paintingandpainting.blservice.factory.RecognitionBlServiceFactory;
 import surevil.paintingandpainting.blservice.record.RecognitionBlService;
 import surevil.paintingandpainting.exception.CanvasLoadException;
@@ -20,8 +26,12 @@ import surevil.paintingandpainting.publicdata.DataKind;
 import surevil.paintingandpainting.publicdata.PaintingOperationKind;
 import surevil.paintingandpainting.publicdata.Point;
 import surevil.paintingandpainting.publicdata.perfect.ShapeKind;
+import surevil.paintingandpainting.util.PathUtil;
 import surevil.paintingandpainting.util.PromptDialogUtil;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Stack;
 import java.util.function.Consumer;
 
@@ -106,15 +116,72 @@ public class CanvasUiController {
             paintingOperationKindStack.push(PaintingOperationKind.DROP);
         } else {
             Point endPoint = new Point(event.getX(), event.getY());
+            saveSnapshot(selectStartPoint, endPoint);
             fakePaintingKit.drawFrame(selectStartPoint, endPoint);
             Point core = calculateCore(selectStartPoint, endPoint);
-            promptShapeDialog(shape -> {
+            promptShapeDialog(selectStartPoint, endPoint, shape -> {
                 paintingKit.tag(shape, core);
                 perfectPaintingKit.drawShape(shape, selectStartPoint, endPoint);
                 paintingOperationKindStack.push(PaintingOperationKind.SELECT);
                 exitSelectingMode();
             });
         }
+    }
+
+    private BufferedImage saveSnapshot(Point startPoint, Point endPoint) {
+        try {
+            File file = new File(getSnapshotPath());
+            assert !file.exists() : file.createNewFile();
+            WritableImage image = canvas.snapshot(new SnapshotParameters(), null);
+            PixelReader pixelReader = image.getPixelReader();
+
+            WritableImage wImage = new WritableImage(
+                    (int) Math.floor(endPoint.getX() - startPoint.getX()),
+                    (int) Math.floor(endPoint.getY() - startPoint.getY()));
+            PixelWriter pixelWriter = wImage.getPixelWriter();
+
+            //算出X轴的起始点与终结点
+            int readStartX;
+            int readEndX;
+            if (startPoint.getX() > endPoint.getX()) {
+                readStartX = (int) Math.floor(endPoint.getX());
+                readEndX = (int) Math.floor(startPoint.getX());
+            } else {
+                readStartX = (int) Math.floor(startPoint.getX());
+                readEndX = (int) Math.floor(endPoint.getX());
+            }
+
+            //算出Y轴的起始点与终结点
+            int readStartY;
+            int readEndY;
+            if (startPoint.getY() > endPoint.getY()) {
+                readStartY = (int) Math.floor(endPoint.getY());
+                readEndY = (int) Math.floor(startPoint.getY());
+            } else {
+                readStartY = (int) Math.floor(startPoint.getY());
+                readEndY = (int) Math.floor(endPoint.getY());
+            }
+
+            // 按起始点与终结点填充入新的图中
+            for (int i = readStartY; i < readEndY; i++) {
+                for (int j = readStartX; j < readEndX; j++) {
+                    Color color = pixelReader.getColor(j, i);
+                    color = color.brighter();
+                    pixelWriter.setColor(j - readStartX, i - readStartY, color);
+                }
+            }
+            //导出截图
+            return SwingFXUtils.fromFXImage(wImage, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+            PromptDialogUtil.show(container, "截图失败！", "截图失败！请重试……");
+            return null;
+        }
+    }
+
+    private String getSnapshotPath() {
+        System.out.println(PathUtil.getDatabasePath("snapshot.png"));
+        return PathUtil.getDatabasePath("snapshot.png");
     }
 
     /**
@@ -172,10 +239,11 @@ public class CanvasUiController {
         isSelecting = true;
     }
 
-    private void promptShapeDialog(Consumer<ShapeKind> shapeConsumer) {
+    private void promptShapeDialog(Point startPoint, Point endPoint, Consumer<ShapeKind> shapeConsumer) {
         JFXDialogLayout layout = new JFXDialogLayout();
         VBox vBox = new VBox();
-        ShapeKind recognizedShapeKind = recognitionBlService.recognizeShapeByImage();
+        BufferedImage bufferedImage = saveSnapshot(startPoint, endPoint);
+        ShapeKind recognizedShapeKind = recognitionBlService.recognizeShapeByImage(bufferedImage);
         Label label = new Label(" 请选择图形，系统推荐结果为" + recognizedShapeKind.getName());
         vBox.getChildren().add(label);
         layout.setHeading(vBox);
