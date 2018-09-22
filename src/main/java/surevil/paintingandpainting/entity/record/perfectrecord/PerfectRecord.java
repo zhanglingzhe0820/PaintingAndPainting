@@ -1,6 +1,7 @@
 package surevil.paintingandpainting.entity.record.perfectrecord;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import surevil.paintingandpainting.entity.record.Record;
 import surevil.paintingandpainting.publicdata.DataKind;
 import surevil.paintingandpainting.publicdata.Point;
@@ -12,8 +13,8 @@ public class PerfectRecord extends Record {
     private Point startPoint;
     private Point endPoint;
 
-    public PerfectRecord(ShapeKind shapeKind, Point startPoint, Point endPoint) {
-        super(DataKind.PERFECT);
+    public PerfectRecord(Color color, int brushSize, ShapeKind shapeKind, Point startPoint, Point endPoint) {
+        super(DataKind.PERFECT, color, brushSize);
         this.shapeKind = shapeKind;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
@@ -44,7 +45,13 @@ public class PerfectRecord extends Record {
     }
 
     public void draw(GraphicsContext graphicsContext) {
+        graphicsContext.save();
+
+        graphicsContext.setLineWidth(this.getBrushSize());
+        graphicsContext.setStroke(this.getColor());
         PaintingUtil.drawShape(graphicsContext, shapeKind, startPoint, endPoint);
+
+        graphicsContext.restore();
     }
 }
 

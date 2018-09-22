@@ -1,6 +1,7 @@
 package surevil.paintingandpainting.presentation.canvasui;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXColorPicker;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import de.jensd.fx.glyphs.materialicons.MaterialIconView;
@@ -29,13 +30,18 @@ import surevil.paintingandpainting.publicdata.perfect.ShapeKind;
 import surevil.paintingandpainting.util.PathUtil;
 import surevil.paintingandpainting.util.PromptDialogUtil;
 
-import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.Stack;
 import java.util.function.Consumer;
 
 public class CanvasUiController {
+    @FXML
+    private JFXColorPicker colorPicker;
+    @FXML
+    private Label brushSizeLabel;
+
     @FXML
     private StackPane container;
     @FXML
@@ -54,29 +60,61 @@ public class CanvasUiController {
 
     //用于确认是否是选择模式（画框模式）
     private boolean isSelecting;
+    //用于确认是否是擦除模式
+    private boolean isErasing;
     //选择模式的起始点（画框模式）
     private Point selectStartPoint;
+    private int brushSize;
 
     private RecognitionBlService recognitionBlService = RecognitionBlServiceFactory.getRecognitionBlService();
     private Stack<PaintingOperationKind> paintingOperationKindStack = new Stack<>();
+
+    private static final String BRUSH_SIZE_TEXT = "笔画粗细：";
 
     @FXML
     private void initialize() {
         initContainer();
         initCanvas();
+        initComponents();
     }
 
+    /**
+     * 初始化容器面板
+     */
     private void initContainer() {
         container.setMinWidth(canvas.getWidth());
         container.setMinHeight(canvas.getHeight());
     }
 
+    /**
+     * 初始化三个画图面板
+     */
     private void initCanvas() {
         paintingKit = new PaintingKit(canvas);
         fakePaintingKit = new PaintingKit(fakeCanvas);
         perfectPaintingKit = new PaintingKit(perfectCanvas);
         isSelecting = false;
+        isErasing = false;
         loadCanvas();
+    }
+
+    /**
+     * 初始化组件属性2
+     */
+    private void initComponents() {
+        colorPicker.setValue(Color.BLACK);
+
+        brushSize = 1;
+        refreshPaintingKit();
+    }
+
+    /**
+     * 刷新面板属性2
+     */
+    private void refreshPaintingKit() {
+        brushSizeLabel.setText(BRUSH_SIZE_TEXT + brushSize);
+        paintingKit.setBrushSize(brushSize);
+        perfectPaintingKit.setBrushSize(brushSize);
     }
 
     private void loadCanvas() {
@@ -90,15 +128,21 @@ public class CanvasUiController {
 
     @FXML
     private void draw(MouseEvent event) {
+        Point nowPoint = new Point(event.getX(), event.getY());
         if (!isSelecting) {
-            //非选择模式下自由绘图
             fakePaintingKit.clearAll();
-            paintingKit.drawPoint(new Point(event.getX(), event.getY()));
+            //非选择模式下自由绘图
+            if (isErasing) {
+                //擦除模式下橡皮书写
+                paintingKit.erasePoint(nowPoint);
+            } else {//非擦除模式下正常绘图
+                paintingKit.drawPoint(nowPoint);
+            }
             paintingOperationKindStack.push(PaintingOperationKind.LINE);
         } else {
             //选择模式下画框
             if (selectStartPoint == null) {
-                selectStartPoint = new Point(event.getX(), event.getY());
+                selectStartPoint = nowPoint;
             } else {
                 fakePaintingKit.clearAll();
             }
@@ -128,7 +172,7 @@ public class CanvasUiController {
         }
     }
 
-    private BufferedImage saveSnapshot(Point startPoint, Point endPoint) {
+    private String saveSnapshot(Point startPoint, Point endPoint) {
         try {
             File file = new File(getSnapshotPath());
             assert !file.exists() : file.createNewFile();
@@ -171,7 +215,8 @@ public class CanvasUiController {
                 }
             }
             //导出截图
-            return SwingFXUtils.fromFXImage(wImage, null);
+            ImageIO.write(SwingFXUtils.fromFXImage(wImage, null), "png", file);
+            return getSnapshotPath();
         } catch (IOException e) {
             e.printStackTrace();
             PromptDialogUtil.show(container, "截图失败！", "截图失败！请重试……");
@@ -180,7 +225,6 @@ public class CanvasUiController {
     }
 
     private String getSnapshotPath() {
-        System.out.println(PathUtil.getDatabasePath("snapshot.png"));
         return PathUtil.getDatabasePath("snapshot.png");
     }
 
@@ -198,6 +242,17 @@ public class CanvasUiController {
     }
 
     @FXML
+    private void onBtnEditClicked(MouseEvent event) {
+        isErasing = false;
+        isSelecting = false;
+    }
+
+    @FXML
+    private void onBtnEraseClicked(MouseEvent event) {
+        isErasing = true;
+    }
+
+    @FXML
     private void onBtnRevertClicked(MouseEvent event) {
         try {
             while (true) {
@@ -209,6 +264,7 @@ public class CanvasUiController {
                 } else {
                     paintingKit.revert();
                     perfectPaintingKit.revert();
+                    break;
                 }
             }
         } catch (CanvasLoadException e) {
@@ -242,8 +298,8 @@ public class CanvasUiController {
     private void promptShapeDialog(Point startPoint, Point endPoint, Consumer<ShapeKind> shapeConsumer) {
         JFXDialogLayout layout = new JFXDialogLayout();
         VBox vBox = new VBox();
-        BufferedImage bufferedImage = saveSnapshot(startPoint, endPoint);
-        ShapeKind recognizedShapeKind = recognitionBlService.recognizeShapeByImage(bufferedImage);
+        String snapshotPath = saveSnapshot(startPoint, endPoint);
+        ShapeKind recognizedShapeKind = recognitionBlService.recognizeShapeByImage(snapshotPath);
         Label label = new Label(" 请选择图形，系统推荐结果为" + recognizedShapeKind.getName());
         vBox.getChildren().add(label);
         layout.setHeading(vBox);
@@ -261,4 +317,27 @@ public class CanvasUiController {
         dialog.show();
     }
 
+    @FXML
+    private void onColorChanged() {
+        distributeColor(colorPicker.getValue());
+    }
+
+    private void distributeColor(Color color) {
+        paintingKit.setColor(color);
+        perfectPaintingKit.setColor(color);
+    }
+
+    @FXML
+    private void onBtnIncreaseSizeClicked() {
+        brushSize++;
+        refreshPaintingKit();
+    }
+
+    @FXML
+    private void onBtnDecreaseSizeClicked() {
+        if (brushSize > 1) {
+            brushSize--;
+            refreshPaintingKit();
+        }
+    }
 }

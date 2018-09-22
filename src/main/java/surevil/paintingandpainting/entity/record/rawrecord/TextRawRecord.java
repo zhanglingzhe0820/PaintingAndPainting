@@ -1,16 +1,17 @@
 package surevil.paintingandpainting.entity.record.rawrecord;
 
 import javafx.scene.canvas.GraphicsContext;
-import surevil.paintingandpainting.publicdata.raw.RawKind;
+import javafx.scene.paint.Color;
 import surevil.paintingandpainting.publicdata.Point;
+import surevil.paintingandpainting.publicdata.raw.RawKind;
 import surevil.paintingandpainting.util.PaintingUtil;
 
 public class TextRawRecord extends RawRecord {
     private String text;
     private Point core;
 
-    public TextRawRecord(String text, Point core) {
-        super(RawKind.TEXT);
+    public TextRawRecord(Color color, int brushSize, String text, Point core) {
+        super(color, brushSize, RawKind.TEXT);
         this.text = text;
         this.core = core;
     }
@@ -33,6 +34,12 @@ public class TextRawRecord extends RawRecord {
 
     @Override
     public void draw(GraphicsContext graphicsContext) {
+        graphicsContext.save();
+
+        graphicsContext.setLineWidth(this.getBrushSize());
+        graphicsContext.setStroke(this.getColor());
         PaintingUtil.drawText(graphicsContext, text, core);
+
+        graphicsContext.restore();
     }
 }
