@@ -31,6 +31,7 @@ import surevil.paintingandpainting.util.PathUtil;
 import surevil.paintingandpainting.util.PromptDialogUtil;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Stack;
@@ -172,7 +173,7 @@ public class CanvasUiController {
         }
     }
 
-    private String saveSnapshot(Point startPoint, Point endPoint) {
+    private BufferedImage saveSnapshot(Point startPoint, Point endPoint) {
         try {
             File file = new File(getSnapshotPath());
             assert !file.exists() : file.createNewFile();
@@ -215,8 +216,9 @@ public class CanvasUiController {
                 }
             }
             //导出截图
-            ImageIO.write(SwingFXUtils.fromFXImage(wImage, null), "png", file);
-            return getSnapshotPath();
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(wImage, null);
+            ImageIO.write(bufferedImage, "png", file);
+            return bufferedImage;
         } catch (IOException e) {
             e.printStackTrace();
             PromptDialogUtil.show(container, "截图失败！", "截图失败！请重试……");
@@ -298,8 +300,9 @@ public class CanvasUiController {
     private void promptShapeDialog(Point startPoint, Point endPoint, Consumer<ShapeKind> shapeConsumer) {
         JFXDialogLayout layout = new JFXDialogLayout();
         VBox vBox = new VBox();
-        String snapshotPath = saveSnapshot(startPoint, endPoint);
-        ShapeKind recognizedShapeKind = recognitionBlService.recognizeShapeByImage(snapshotPath);
+        BufferedImage bufferedImage = saveSnapshot(startPoint, endPoint);
+        assert bufferedImage != null;
+        ShapeKind recognizedShapeKind = recognitionBlService.recognizeShapeByImage(getSnapshotPath(), bufferedImage.getWidth(), bufferedImage.getHeight());
         Label label = new Label(" 请选择图形，系统推荐结果为" + recognizedShapeKind.getName());
         vBox.getChildren().add(label);
         layout.setHeading(vBox);

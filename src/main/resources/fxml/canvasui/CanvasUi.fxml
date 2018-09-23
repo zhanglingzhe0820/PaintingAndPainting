@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXColorPicker?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import de.jensd.fx.glyphs.materialicons.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.canvas.Canvas?>
@@ -29,8 +30,8 @@
                 <ContactableButton buttonType="RAISED" onMouseClicked="#onBtnDecreaseSizeClicked"
                                    style="-fx-background-color: #999630; -fx-text-fill: #FFFFFF" text="减小">
                     <graphic>
-                        <MaterialIconView glyphName="FORMAT_INDENT_DECREASE" glyphSize="24"
-                                          glyphStyle="-fx-fill: #FFFFFF"/>
+                        <FontAwesomeIconView glyphName="MINUS" glyphSize="24"
+                                             glyphStyle="-fx-fill: #FFFFFF"/>
                     </graphic>
                 </ContactableButton>
                 <HBox.margin>
@@ -39,6 +40,9 @@
                 <padding>
                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
                 </padding>
+                <VBox.margin>
+                    <Insets bottom="20.0"/>
+                </VBox.margin>
             </VBox>
             <VBox spacing="20.0" style="-fx-background-color: rgba(132,134,133,0.95);-fx-text-alignment: right">
                 <ContactableButton fx:id="btnSelect" buttonType="RAISED" onMouseClicked="#onBtnSelectClicked"

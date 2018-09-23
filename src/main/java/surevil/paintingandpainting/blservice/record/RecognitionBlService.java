@@ -9,5 +9,5 @@ public interface RecognitionBlService {
      * @param path
      * @return
      */
-    ShapeKind recognizeShapeByImage(String path);
+    ShapeKind recognizeShapeByImage(String path, double width, double height);
 }
