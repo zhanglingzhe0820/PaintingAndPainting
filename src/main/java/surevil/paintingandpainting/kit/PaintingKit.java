@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * 自己封装的画板工具类
+ */
 public class PaintingKit {
 
     private Canvas canvas;
@@ -39,6 +42,9 @@ public class PaintingKit {
         initAttributes();
     }
 
+    /**
+     * 初始化画板属性
+     */
     private void initAttributes() {
         color = Color.BLACK;
         brushSize = 1;
@@ -52,6 +58,11 @@ public class PaintingKit {
         this.brushSize = brushSize;
     }
 
+    /**
+     * 画点并连线（外部看来只是画点）
+     *
+     * @param point
+     */
     public void drawPoint(Point point) {
         graphicsContext.save();
 
@@ -67,6 +78,11 @@ public class PaintingKit {
         graphicsContext.restore();
     }
 
+    /**
+     * 同画点，颜色调为白色，即擦除
+     *
+     * @param point
+     */
     public void erasePoint(Point point) {
         graphicsContext.save();
 
@@ -83,6 +99,12 @@ public class PaintingKit {
         graphicsContext.restore();
     }
 
+    /**
+     * 画框
+     *
+     * @param startPoint
+     * @param endPoint
+     */
     public void drawFrame(Point startPoint, Point endPoint) {
         graphicsContext.save();
 
@@ -92,29 +114,58 @@ public class PaintingKit {
         graphicsContext.restore();
     }
 
+    /**
+     * 回撤，仅回撤单独一步
+     *
+     * @throws CanvasLoadException
+     */
     public void revert() throws CanvasLoadException {
         restoreLast();
     }
 
+    /**
+     * 丢下画笔
+     */
     public void dropBrush() {
         lastPoint = null;
     }
 
+    /**
+     * 清屏
+     */
     public void clearAll() {
         graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         records.clear();
     }
 
+    /**
+     * 存储
+     *
+     * @param dataKind
+     * @throws CanvasSaveException
+     */
     public void save(DataKind dataKind) throws CanvasSaveException {
         historyBlService.updateHistory(records, dataKind);
     }
 
+    /**
+     * 加载
+     *
+     * @param dataKind
+     * @throws CanvasLoadException
+     */
     public void load(DataKind dataKind) throws CanvasLoadException {
         List<Record> loadedRecords = historyBlService.loadHistory(dataKind);
         drawAllOperations(loadedRecords);
         records = loadedRecords.stream().collect(Stack::new, Stack::push, Stack::addAll);
     }
 
+    /**
+     * 打标签
+     *
+     * @param shapeKind
+     * @param core
+     */
     public void tag(ShapeKind shapeKind, Point core) {
         graphicsContext.save();
 
@@ -124,6 +175,13 @@ public class PaintingKit {
         graphicsContext.restore();
     }
 
+    /**
+     * 画形状
+     *
+     * @param shapeKind
+     * @param startPoint
+     * @param endPoint
+     */
     public void drawShape(ShapeKind shapeKind, Point startPoint, Point endPoint) {
         graphicsContext.save();
 
@@ -135,12 +193,23 @@ public class PaintingKit {
         graphicsContext.restore();
     }
 
+    /**
+     * 内部方法：用于实现回撤，即pop一步，并重绘
+     *
+     * @throws CanvasLoadException
+     */
     private void restoreLast() throws CanvasLoadException {
         graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         records.pop();
         drawAllOperations(new ArrayList<>(records));
     }
 
+    /**
+     * 内部方法：用于实现回撤，即pop后重画所有笔画
+     *
+     * @param records
+     * @throws CanvasLoadException
+     */
     private void drawAllOperations(List<Record> records) throws CanvasLoadException {
         try {
             for (Record record : records) {

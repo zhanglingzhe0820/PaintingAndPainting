@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -77,6 +78,7 @@ public class CanvasUiController {
         initContainer();
         initCanvas();
         initComponents();
+        container.requestFocus();
     }
 
     /**
@@ -100,24 +102,8 @@ public class CanvasUiController {
     }
 
     /**
-     * 初始化组件属性2
+     * 根据类型加载面板
      */
-    private void initComponents() {
-        colorPicker.setValue(Color.BLACK);
-
-        brushSize = 1;
-        refreshPaintingKit();
-    }
-
-    /**
-     * 刷新面板属性2
-     */
-    private void refreshPaintingKit() {
-        brushSizeLabel.setText(BRUSH_SIZE_TEXT + brushSize);
-        paintingKit.setBrushSize(brushSize);
-        perfectPaintingKit.setBrushSize(brushSize);
-    }
-
     private void loadCanvas() {
         try {
             paintingKit.load(DataKind.RAW);
@@ -127,6 +113,64 @@ public class CanvasUiController {
         }
     }
 
+    /**
+     * 初始化组件属性
+     */
+    private void initComponents() {
+        colorPicker.setValue(Color.BLACK);
+
+        brushSize = 1;
+        refreshPaintingKit();
+    }
+
+    @FXML
+    private void onHotKeyPressed(KeyEvent event) {
+        switch (event.getCode()) {
+            case Q:
+                onBtnSelectClicked();
+                break;
+            case W:
+                onBtnEditClicked();
+                break;
+            case E:
+                onBtnEraseClicked();
+                break;
+            case R:
+                onBtnEraseClicked();
+                break;
+            case Z:
+                onBtnRevertClicked();
+                break;
+            case X:
+                onBtnResetClicked();
+                break;
+            case S:
+                onBtnSubmitClicked();
+                break;
+            case OPEN_BRACKET:
+                onBtnDecreaseSizeClicked();
+                break;
+            case CLOSE_BRACKET:
+                onBtnIncreaseSizeClicked();
+                break;
+        }
+    }
+
+    /**
+     * 刷新面板属性
+     */
+    private void refreshPaintingKit() {
+        brushSizeLabel.setText(BRUSH_SIZE_TEXT + brushSize);
+        paintingKit.setBrushSize(brushSize);
+        perfectPaintingKit.setBrushSize(brushSize);
+    }
+
+
+    /**
+     * 绘图
+     *
+     * @param event
+     */
     @FXML
     private void draw(MouseEvent event) {
         Point nowPoint = new Point(event.getX(), event.getY());
@@ -173,6 +217,13 @@ public class CanvasUiController {
         }
     }
 
+    /**
+     * 保存区域截图
+     *
+     * @param startPoint
+     * @param endPoint
+     * @return
+     */
     private BufferedImage saveSnapshot(Point startPoint, Point endPoint) {
         try {
             File file = new File(getSnapshotPath());
@@ -243,19 +294,28 @@ public class CanvasUiController {
         return new Point((start.getX() + end.getX()) / 2, (start.getY() + end.getY()) / 2);
     }
 
+    /**
+     * 进入画图模式
+     */
     @FXML
-    private void onBtnEditClicked(MouseEvent event) {
+    private void onBtnEditClicked() {
         isErasing = false;
         isSelecting = false;
     }
 
+    /**
+     * 进入擦除模式
+     */
     @FXML
-    private void onBtnEraseClicked(MouseEvent event) {
+    private void onBtnEraseClicked() {
         isErasing = true;
     }
 
+    /**
+     * 根据事件序列进行回撤
+     */
     @FXML
-    private void onBtnRevertClicked(MouseEvent event) {
+    private void onBtnRevertClicked() {
         try {
             while (true) {
                 PaintingOperationKind paintingOperationKind = paintingOperationKindStack.pop();
@@ -275,14 +335,20 @@ public class CanvasUiController {
         }
     }
 
+    /**
+     * 重置
+     */
     @FXML
-    private void onBtnResetClicked(MouseEvent event) {
+    private void onBtnResetClicked() {
         paintingKit.clearAll();
         perfectPaintingKit.clearAll();
     }
 
+    /**
+     * 提交
+     */
     @FXML
-    private void onBtnSubmitClicked(MouseEvent event) {
+    private void onBtnSubmitClicked() {
         try {
             paintingKit.save(DataKind.RAW);
             perfectPaintingKit.save(DataKind.PERFECT);
@@ -292,11 +358,21 @@ public class CanvasUiController {
         }
     }
 
+    /**
+     * 进入选择模式
+     */
     @FXML
-    private void onBtnSelectClicked(MouseEvent event) {
+    private void onBtnSelectClicked() {
         isSelecting = true;
     }
 
+    /**
+     * 弹出选择图形框
+     *
+     * @param startPoint
+     * @param endPoint
+     * @param shapeConsumer
+     */
     private void promptShapeDialog(Point startPoint, Point endPoint, Consumer<ShapeKind> shapeConsumer) {
         JFXDialogLayout layout = new JFXDialogLayout();
         VBox vBox = new VBox();
@@ -320,6 +396,9 @@ public class CanvasUiController {
         dialog.show();
     }
 
+    /**
+     * 根据颜色变化变化画板颜色属性
+     */
     @FXML
     private void onColorChanged() {
         distributeColor(colorPicker.getValue());
@@ -330,12 +409,18 @@ public class CanvasUiController {
         perfectPaintingKit.setColor(color);
     }
 
+    /**
+     * 增加笔画粗细
+     */
     @FXML
     private void onBtnIncreaseSizeClicked() {
         brushSize++;
         refreshPaintingKit();
     }
 
+    /**
+     * 减少笔画粗细
+     */
     @FXML
     private void onBtnDecreaseSizeClicked() {
         if (brushSize > 1) {

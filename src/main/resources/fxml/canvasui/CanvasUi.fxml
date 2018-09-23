@@ -11,8 +11,9 @@
 <?import surevil.paintingandpainting.presentation.component.*?>
 <StackPane fx:id="container" alignment="TOP_CENTER" prefHeight="800" prefWidth="1475"
            xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="surevil.paintingandpainting.presentation.canvasui.CanvasUiController">
-    <HBox>
+           fx:controller="surevil.paintingandpainting.presentation.canvasui.CanvasUiController"
+           onKeyPressed="#onHotKeyPressed">
+    <HBox onKeyPressed="#onHotKeyPressed">
         <VBox>
             <JFXColorPicker fx:id="colorPicker" onAction="#onColorChanged"/>
             <Label fx:id="brushSizeLabel" style="-fx-font-weight: bold">
@@ -21,7 +22,7 @@
                 </VBox.margin>
             </Label>
             <VBox spacing="20.0" style="-fx-background-color: rgba(132,134,133,0.95);-fx-text-alignment: right">
-                <ContactableButton buttonType="RAISED" onMouseClicked="#onBtnIncreaseSizeClicked"
+                <ContactableButton fx:id="btnAddSize" buttonType="RAISED" onMouseClicked="#onBtnIncreaseSizeClicked"
                                    style="-fx-background-color: #999630; -fx-text-fill: #FFFFFF" text="增大">
                     <graphic>
                         <MaterialIconView glyphName="ADD" glyphSize="24" glyphStyle="-fx-fill: #FFFFFF"/>
@@ -45,38 +46,38 @@
                 </VBox.margin>
             </VBox>
             <VBox spacing="20.0" style="-fx-background-color: rgba(132,134,133,0.95);-fx-text-alignment: right">
-                <ContactableButton fx:id="btnSelect" buttonType="RAISED" onMouseClicked="#onBtnSelectClicked"
+                <ContactableButton buttonType="RAISED" onMouseClicked="#onBtnSelectClicked"
                                    style="-fx-background-color: #339900; -fx-text-fill: #FFFFFF" text="选中">
                     <graphic>
                         <MaterialIconView glyphName="CHECK_BOX_OUTLINE_BLANK" glyphSize="24"
                                           glyphStyle="-fx-fill: #FFFFFF"/>
                     </graphic>
                 </ContactableButton>
-                <ContactableButton fx:id="btnEdit" buttonType="RAISED" onMouseClicked="#onBtnEditClicked"
+                <ContactableButton buttonType="RAISED" onMouseClicked="#onBtnEditClicked"
                                    style="-fx-background-color: #000000; -fx-text-fill: #FFFFFF" text="绘图">
                     <graphic>
                         <MaterialIconView glyphName="EDIT" glyphSize="24" glyphStyle="-fx-fill: #FFFFFF"/>
                     </graphic>
                 </ContactableButton>
-                <ContactableButton fx:id="btnErase" buttonType="RAISED" onMouseClicked="#onBtnEraseClicked"
+                <ContactableButton buttonType="RAISED" onMouseClicked="#onBtnEraseClicked"
                                    style="-fx-background-color: #FFFFFF; -fx-text-fill: #000000" text="擦除">
                     <graphic>
                         <MaterialIconView glyphName="PHONELINK_ERASE" glyphSize="24" glyphStyle="-fx-fill: #000000"/>
                     </graphic>
                 </ContactableButton>
-                <ContactableButton fx:id="btnRevert" buttonType="RAISED" onMouseClicked="#onBtnRevertClicked"
+                <ContactableButton buttonType="RAISED" onMouseClicked="#onBtnRevertClicked"
                                    style="-fx-background-color: #9999CC; -fx-text-fill: #FFFFFF" text="回撤">
                     <graphic>
                         <MaterialIconView glyphName="RESTORE" glyphSize="24" glyphStyle="-fx-fill: #FFFFFF"/>
                     </graphic>
                 </ContactableButton>
-                <ContactableButton fx:id="btnReset" buttonType="RAISED" onMouseClicked="#onBtnResetClicked"
+                <ContactableButton buttonType="RAISED" onMouseClicked="#onBtnResetClicked"
                                    style="-fx-background-color: #e64a19; -fx-text-fill: #FFFFFF" text="重置">
                     <graphic>
                         <MaterialIconView glyphName="REFRESH" glyphSize="24" glyphStyle="-fx-fill: #FFFFFF"/>
                     </graphic>
                 </ContactableButton>
-                <ContactableButton fx:id="btnSubmit" buttonType="RAISED" onMouseClicked="#onBtnSubmitClicked"
+                <ContactableButton buttonType="RAISED" onMouseClicked="#onBtnSubmitClicked"
                                    style="-fx-background-color: #3F51B5; -fx-text-fill: #FFFFFF" text="提交">
                     <graphic>
                         <MaterialIconView glyphName="CHECK" glyphSize="24" glyphStyle="-fx-fill: #FFFFFF"/>

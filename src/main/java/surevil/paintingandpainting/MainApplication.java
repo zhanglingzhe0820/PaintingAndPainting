@@ -57,5 +57,6 @@ public class MainApplication extends Application {
         StageManager.setStage(primaryStage);
         controller.initializeUiConfig();
         primaryStage.show();
+        scene.getRoot().requestFocus();
     }
 }
