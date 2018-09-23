@@ -13,7 +13,7 @@
            xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="surevil.paintingandpainting.presentation.canvasui.CanvasUiController"
            onKeyPressed="#onHotKeyPressed">
-    <HBox onKeyPressed="#onHotKeyPressed">
+    <HBox>
         <VBox>
             <JFXColorPicker fx:id="colorPicker" onAction="#onColorChanged"/>
             <Label fx:id="brushSizeLabel" style="-fx-font-weight: bold">

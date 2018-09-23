@@ -72,7 +72,7 @@ public class PaintingKit {
         graphicsContext.setLineWidth(brushSize);
         graphicsContext.setStroke(color);
         PaintingUtil.drawLine(graphicsContext, lastPoint, point);
-        records.push(new LineRawRecord(color, brushSize, lastPoint, point));
+        records.push(new LineRawRecord(PaintingUtil.convertToMyColor(color), brushSize, lastPoint, point));
         lastPoint = point;
 
         graphicsContext.restore();
@@ -93,7 +93,7 @@ public class PaintingKit {
         graphicsContext.setStroke(Color.WHITE);
         graphicsContext.setLineWidth(5);
         PaintingUtil.drawLine(graphicsContext, lastPoint, point);
-        records.push(new LineRawRecord(Color.WHITE, brushSize, lastPoint, point));
+        records.push(new LineRawRecord(PaintingUtil.convertToMyColor(Color.WHITE), brushSize, lastPoint, point));
         lastPoint = point;
 
         graphicsContext.restore();
@@ -170,7 +170,7 @@ public class PaintingKit {
         graphicsContext.save();
 
         PaintingUtil.drawText(graphicsContext, shapeKind.getName(), core);
-        records.push(new TextRawRecord(color, brushSize, shapeKind.getName(), core));
+        records.push(new TextRawRecord(PaintingUtil.convertToMyColor(color), brushSize, shapeKind.getName(), core));
 
         graphicsContext.restore();
     }
@@ -188,7 +188,7 @@ public class PaintingKit {
         graphicsContext.setLineWidth(brushSize);
         graphicsContext.setStroke(color);
         PaintingUtil.drawShape(graphicsContext, shapeKind, startPoint, endPoint);
-        records.push(new PerfectRecord(color, brushSize, shapeKind, startPoint, endPoint));
+        records.push(new PerfectRecord(PaintingUtil.convertToMyColor(color), brushSize, shapeKind, startPoint, endPoint));
 
         graphicsContext.restore();
     }

@@ -13,7 +13,7 @@ public class HistoryDataServiceImpl implements HistoryDataService {
     private HistoryDao historyDao = HistoryDaoFactory.getHistoryDao();
 
     /**
-     * save the history of record
+     * 保存历史记录
      *
      * @param history
      */
@@ -26,7 +26,7 @@ public class HistoryDataServiceImpl implements HistoryDataService {
     }
 
     /**
-     * get the history
+     * 获得所有历史记录
      */
     @Override
     public List<History> getAllHistory() throws CanvasLoadException {

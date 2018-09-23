@@ -2,6 +2,7 @@ package surevil.paintingandpainting;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -51,12 +52,12 @@ public class MainApplication extends Application {
 
         FXMLLoader contentLoader = new FXMLLoader();
         contentLoader.setLocation(getClass().getResource("/fxml/canvasui/CanvasUi.fxml"));
-
-        controller.setContent(contentLoader.load());
+        Node contentNode = contentLoader.load();
+        controller.setContent(contentNode);
 
         StageManager.setStage(primaryStage);
         controller.initializeUiConfig();
         primaryStage.show();
-        scene.getRoot().requestFocus();
+        contentNode.requestFocus();
     }
 }

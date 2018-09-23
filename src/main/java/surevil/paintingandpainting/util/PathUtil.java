@@ -35,18 +35,24 @@ public class PathUtil {
         String resourcePath = ResourceUtil.getFilePathUnderRootDirOfJarFileOrClassDir("/data");
 
         File dir = new File(resourcePath);
-        assert !dir.exists() : dir.mkdir();
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
 
         dir = new File(resourcePath + "/ser");
-        assert !dir.exists() : dir.mkdir();
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
 
         ArrayList<File> fileArrayList = new ArrayList<>();
         fileArrayList.add(new File(resourcePath + "/History.txt"));
-        fileArrayList.add(new File(resourcePath + "/snapshot.txt"));
+        fileArrayList.add(new File(resourcePath + "/snapshot.png"));
 
         for (File file : fileArrayList) {
             try {
-                assert !file.exists() : file.createNewFile();
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

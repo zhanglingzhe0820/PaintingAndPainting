@@ -1,6 +1,8 @@
 package surevil.paintingandpainting.util;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import surevil.paintingandpainting.publicdata.MyColor;
 import surevil.paintingandpainting.publicdata.Point;
 import surevil.paintingandpainting.publicdata.perfect.ShapeKind;
 
@@ -44,5 +46,25 @@ public class PaintingUtil {
                 break;
         }
 
+    }
+
+    /**
+     * 将awt.Color转为javafx.Color
+     *
+     * @param myColor
+     * @return
+     */
+    public static Color convertToJavafxColor(MyColor myColor) {
+        return new Color(myColor.getRed(), myColor.getGreen(), myColor.getBlue(), myColor.getOpacity());
+    }
+
+    /**
+     * 将javafx.Color转为awt.Color
+     *
+     * @param color
+     * @return
+     */
+    public static MyColor convertToMyColor(Color color) {
+        return new MyColor(color.getRed(), color.getGreen(), color.getBlue(), color.getOpacity());
     }
 }

@@ -1,17 +1,17 @@
 package surevil.paintingandpainting.entity.record;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import surevil.paintingandpainting.publicdata.DataKind;
+import surevil.paintingandpainting.publicdata.MyColor;
 
 import java.io.Serializable;
 
 public abstract class Record implements Serializable {
     private DataKind dataKind;
-    private Color color;
+    private MyColor color;
     private int brushSize;
 
-    public Record(DataKind dataKind, Color color, int brushSize) {
+    public Record(DataKind dataKind, MyColor color, int brushSize) {
         this.dataKind = dataKind;
         this.color = color;
         this.brushSize = brushSize;
@@ -25,11 +25,11 @@ public abstract class Record implements Serializable {
         this.dataKind = dataKind;
     }
 
-    public Color getColor() {
+    public MyColor getColor() {
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(MyColor color) {
         this.color = color;
     }
 

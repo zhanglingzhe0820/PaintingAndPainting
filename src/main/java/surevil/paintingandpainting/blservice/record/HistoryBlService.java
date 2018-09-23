@@ -10,7 +10,7 @@ import java.util.Stack;
 
 public interface HistoryBlService {
     /**
-     * save records(cover the raw data)
+     * 更新历史记录
      *
      * @param recordStack
      * @param dataKind
@@ -18,7 +18,7 @@ public interface HistoryBlService {
     void updateHistory(Stack<Record> recordStack, DataKind dataKind) throws CanvasSaveException;
 
     /**
-     * load the raw history
+     * 加载历史记录
      *
      * @return
      */

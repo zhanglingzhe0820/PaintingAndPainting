@@ -227,7 +227,6 @@ public class CanvasUiController {
     private BufferedImage saveSnapshot(Point startPoint, Point endPoint) {
         try {
             File file = new File(getSnapshotPath());
-            assert !file.exists() : file.createNewFile();
             WritableImage image = canvas.snapshot(new SnapshotParameters(), null);
             PixelReader pixelReader = image.getPixelReader();
 
@@ -277,6 +276,11 @@ public class CanvasUiController {
         }
     }
 
+    /**
+     * 获得截图路径
+     *
+     * @return
+     */
     private String getSnapshotPath() {
         return PathUtil.getDatabasePath("snapshot.png");
     }

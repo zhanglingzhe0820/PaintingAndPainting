@@ -18,7 +18,7 @@ public class HistoryBlServiceImpl implements HistoryBlService {
     private HistoryDataService historyDataService = HistoryDataServiceFactory.getHistoryDataService();
 
     /**
-     * save records(cover the raw data)
+     * 更新历史记录
      *
      * @param recordStack
      * @param dataKind
@@ -30,7 +30,7 @@ public class HistoryBlServiceImpl implements HistoryBlService {
     }
 
     /**
-     * load the raw history
+     * 加载历史记录
      *
      * @param dataKind
      * @return

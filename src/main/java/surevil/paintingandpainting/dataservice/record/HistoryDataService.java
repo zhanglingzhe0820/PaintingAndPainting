@@ -8,14 +8,14 @@ import java.util.List;
 
 public interface HistoryDataService {
     /**
-     * save the history of record
+     * 保存历史记录
      *
      * @param history
      */
     void save(History history) throws CanvasSaveException;
 
     /**
-     * get all the history
+     * 获得所有历史记录
      */
     List<History> getAllHistory() throws CanvasLoadException;
 }
