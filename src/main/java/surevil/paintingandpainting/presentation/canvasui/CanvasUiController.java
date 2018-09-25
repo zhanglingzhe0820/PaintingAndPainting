@@ -393,6 +393,8 @@ public class CanvasUiController {
             button.setOnMouseClicked(event -> {
                 shapeConsumer.accept(shapeKind);
                 dialog.close();
+                //重新聚焦
+                container.requestFocus();
             });
             hBox.getChildren().add(button);
         }

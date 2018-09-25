@@ -31,7 +31,7 @@
                 <ContactableButton buttonType="RAISED" onMouseClicked="#onBtnDecreaseSizeClicked"
                                    style="-fx-background-color: #999630; -fx-text-fill: #FFFFFF" text="减小">
                     <graphic>
-                        <FontAwesomeIconView glyphName="MINUS" glyphSize="24"
+                        <FontAwesomeIconView glyphName="MINUS" glyphSize="28"
                                              glyphStyle="-fx-fill: #FFFFFF"/>
                     </graphic>
                 </ContactableButton>
